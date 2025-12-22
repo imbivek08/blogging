@@ -4,6 +4,7 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
+import { getApiUrl } from "../utils/api";
 
 export default function UpdatePage() {
   const [formData, setFormData] = useState({});
@@ -15,7 +16,7 @@ export default function UpdatePage() {
   useEffect(() => {
     try {
       const fetchPost = async () => {
-        const res = await fetch(`/api/post/getposts?postId=${postId}`);
+        const res = await fetch(getApiUrl(`/api/post/getposts?postId=${postId}`));
         const data = await res.json();
         if (!res.ok) {
           console.log(data.message);
@@ -37,7 +38,7 @@ export default function UpdatePage() {
     e.preventDefault();
     try {
       const res = await fetch(
-        `/api/post/updatepost/${formData._id}/${currentUser._id}`,
+        getApiUrl(`/api/post/updatepost/${formData._id}/${currentUser._id}`),
         {
           method: "PUT",
           headers: {

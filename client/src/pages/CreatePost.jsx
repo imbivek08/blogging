@@ -4,6 +4,7 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { useNavigate } from "react-router-dom";
 import { app } from "../firebase";
+import { getApiUrl } from "../utils/api";
 import {
   getDownloadURL,
   getStorage,
@@ -62,7 +63,7 @@ export default function CreatePost() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch("/api/post/create", {
+      const res = await fetch(getApiUrl("/api/post/create"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

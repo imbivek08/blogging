@@ -2,6 +2,7 @@ import { Alert, Button, Label, Spinner, TextInput } from "flowbite-react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
+import { getApiUrl } from "../utils/api";
 import {
   signInFailure,
   signInStart,
@@ -23,7 +24,7 @@ export default function SignIn() {
     }
     try {
       dispatch(signInStart());
-      const res = await fetch("/api/auth/signin", {
+      const res = await fetch(getApiUrl("/api/auth/signin"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
 

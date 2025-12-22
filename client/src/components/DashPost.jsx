@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { HiOutlineExclamationCircle } from 'react-icons/hi';
 import { Link } from "react-router-dom";
+import { getApiUrl } from "../utils/api";
 export default function DashPost() {
   const { currentUser } = useSelector((state) => state.user);
   const [userPosts, setUserPosts] = useState([]);
@@ -14,7 +15,7 @@ export default function DashPost() {
     const startIndex = userPosts.length;
     try {
       const res = await fetch(
-        `/api/post/getposts?userId=${currentUser._id}&startIndex=${startIndex}`
+        getApiUrl(`/api/post/getposts?userId=${currentUser._id}&startIndex=${startIndex}`)
       );
       const data = await res.json();
       if (res.ok) {
@@ -31,7 +32,7 @@ export default function DashPost() {
     setShowModal(false);
     try {
       const res = await fetch(
-        `/api/post/deletepost/${postIdToDelete}/${currentUser._id}`,
+        getApiUrl(`/api/post/deletepost/${postIdToDelete}/${currentUser._id}`),
         {
           method: 'DELETE',
         }
@@ -53,7 +54,7 @@ export default function DashPost() {
 
     const fetchPosts = async () => {
       try {
-        const res = await fetch(`/api/post/getPosts?userId=${currentUser._id}`);
+        const res = await fetch(getApiUrl(`/api/post/getPosts?userId=${currentUser._id}`));
         const data = await res.json();
 
         if (res.ok) {

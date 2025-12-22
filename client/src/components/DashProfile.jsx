@@ -3,6 +3,7 @@ import { Alert, Button, Modal, TextInput } from "flowbite-react";
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { app } from "../firebase";
+import { getApiUrl } from "../utils/api";
 import {
   getDownloadURL,
   getStorage,
@@ -80,7 +81,7 @@ export default function DashProfile() {
     e.preventDefault();
     try {
       dispatch(updateStart());
-      const res = await fetch(`/api/user/update/${currentUser._id}`, {
+      const res = await fetch(getApiUrl(`/api/user/update/${currentUser._id}`), {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -104,7 +105,7 @@ export default function DashProfile() {
     setShowModel(false);
     try {
       dispatch(deleteUserStart());
-      const res = await fetch(`/api/user/delete/${currentUser._id}`, {
+      const res = await fetch(getApiUrl(`/api/user/delete/${currentUser._id}`), {
         method: "DELETE",
       });
       const data = await res.json();
@@ -120,7 +121,7 @@ export default function DashProfile() {
   };
   const handleSignout = async () => {
     try {
-      const res = await fetch("/api/user/signout", {
+      const res = await fetch(getApiUrl("/api/user/signout"), {
         method: "POST",
       });
       const data = await res.json();
