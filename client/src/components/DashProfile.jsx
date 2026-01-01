@@ -34,8 +34,18 @@ export default function DashProfile() {
   const [imageFileUploadProgress, setIamgeFileUploadProgress] = useState(null);
   const [imageFileUploadError, setIamgeFileUploadError] = useState(null);
   const dispatch = useDispatch();
-  console.log(imageFileUploadProgress, imageFileUploadError);
-  console.log(imageFileUrl);
+  
+  // Debug: Log current user profile picture
+  useEffect(() => {
+    console.log("Current user data:", currentUser);
+    console.log("Profile picture URL:", currentUser?.profilePicture);
+    if (currentUser?.profilePicture) {
+      console.log("Profile picture exists in user data");
+    } else {
+      console.log("No profile picture in user data");
+    }
+  }, [currentUser]);
+  
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -50,27 +60,44 @@ export default function DashProfile() {
   }, [imageFile]);
 
   const uploadImage = async () => {
-    const storage = getStorage(app);
-    const fileName = new Date().getTime() + imageFile.name;
-    const storerRef = ref(storage, fileName);
-    const uploadTask = uploadBytesResumable(storerRef, imageFile);
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        const progress =
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        setIamgeFileUploadProgress(progress.toFixed(0));
-      },
-      (error) => {
-        setIamgeFileUploadError("Could not upload error");
-      },
-      () => {
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          setImageFileUrl(downloadURL);
-          setFormData({ ...formData, profilePicture: downloadURL });
-        });
-      }
-    );
+    setIamgeFileUploadError(null);
+    setIamgeFileUploadProgress(null);
+    try {
+      const storage = getStorage(app);
+      const fileName = new Date().getTime() + "-" + imageFile.name;
+      const storerRef = ref(storage, fileName);
+      const uploadTask = uploadBytesResumable(storerRef, imageFile);
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          setIamgeFileUploadProgress(progress.toFixed(0));
+        },
+        (error) => {
+          setIamgeFileUploadError("Could not upload image: " + error.message);
+          setIamgeFileUploadProgress(null);
+          setImageFile(null);
+          setImageFileUrl(null);
+          console.error("Upload error:", error);
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            console.log("Image uploaded successfully. URL:", downloadURL);
+            setImageFileUrl(downloadURL);
+            setFormData({ ...formData, profilePicture: downloadURL });
+            setIamgeFileUploadProgress(null);
+          }).catch((error) => {
+            setIamgeFileUploadError("Failed to get download URL: " + error.message);
+            console.error("Get URL error:", error);
+          });
+        }
+      );
+    } catch (error) {
+      setIamgeFileUploadError("Upload failed: " + error.message);
+      setIamgeFileUploadProgress(null);
+      console.error("Upload initialization error:", error);
+    }
   };
 
   const handleChange = (e) => {
@@ -148,19 +175,32 @@ export default function DashProfile() {
           hidden
         />
         <div
-          className="w-32 h-32 self-center cursor-pointer"
+          className="w-32 h-32 self-center cursor-pointer shadow-md overflow-hidden rounded-full"
           onClick={() => filePickerRef.current.click()}
         >
-          <img
-            src={imageFileUrl || currentUser.profilePicture || `https://ui-avatars.com/api/?name=${currentUser.username}&background=random`}
-            alt="Profile"
-            className="rounded-full w-full h-full object-cover border-8 border-[lightgray]"
-            onError={(e) => {
-              e.target.onerror = null;
-              e.target.src = `https://ui-avatars.com/api/?name=${currentUser.username}&background=random`;
-            }}
-          />
+          {imageFileUploadProgress && (
+            <div className="w-full h-full flex items-center justify-center bg-gray-200 dark:bg-gray-700">
+              <span className="text-slate-700 dark:text-slate-200">
+                {imageFileUploadProgress}%
+              </span>
+            </div>
+          )}
+          {!imageFileUploadProgress && (
+            <img
+              src={imageFileUrl || currentUser.profilePicture || `https://ui-avatars.com/api/?name=${currentUser.username}&background=random`}
+              alt="Profile"
+              className="rounded-full w-full h-full object-cover border-8 border-[lightgray]"
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = `https://ui-avatars.com/api/?name=${currentUser.username}&background=random`;
+                console.error("Failed to load image:", e.target.src);
+              }}
+            />
+          )}
         </div>
+        {imageFileUploadError && (
+          <Alert color="failure">{imageFileUploadError}</Alert>
+        )}
         <TextInput
           type="text"
           id="username"
