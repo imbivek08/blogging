@@ -119,8 +119,12 @@ export default function CommentSection({ postId }) {
           <p>Signed in as:</p>
           <img
             className="h-5 w-5 object-cover rounded-full"
-            src={currentUser.profilePicture}
+            src={currentUser.profilePicture || `https://ui-avatars.com/api/?name=${currentUser.username}&background=random`}
             alt=""
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = `https://ui-avatars.com/api/?name=${currentUser.username}&background=random`;
+            }}
           />
           <Link
             to={"/dashboard?tab=profile"}

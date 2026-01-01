@@ -57,8 +57,12 @@ export default function Comment({ comment, onLike, onEdit, onDelete }) {
       <div className='flex-shrink-0 mr-3'>
         <img
           className='w-10 h-10 rounded-full bg-gray-200'
-          src={user.profilePicture}
+          src={user.profilePicture || `https://ui-avatars.com/api/?name=${user.username}&background=random`}
           alt={user.username}
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = `https://ui-avatars.com/api/?name=${user.username}&background=random`;
+          }}
         />
       </div>
       <div className='flex-1'>

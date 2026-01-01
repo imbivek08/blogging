@@ -152,9 +152,13 @@ export default function DashProfile() {
           onClick={() => filePickerRef.current.click()}
         >
           <img
-            src={imageFileUrl || currentUser.profilePicture}
+            src={imageFileUrl || currentUser.profilePicture || `https://ui-avatars.com/api/?name=${currentUser.username}&background=random`}
             alt="Profile"
             className="rounded-full w-full h-full object-cover border-8 border-[lightgray]"
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = `https://ui-avatars.com/api/?name=${currentUser.username}&background=random`;
+            }}
           />
         </div>
         <TextInput
