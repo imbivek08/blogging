@@ -73,9 +73,13 @@ export default function PostPage() {
         </Button>
       </Link>
       <img
-        src={post && post.image}
+        src={post && post.image || 'https://via.placeholder.com/800x600?text=No+Image'}
         alt={post && post.title}
         className="mt-10 p-3 max-h-[600px] w-full object-cover"
+        onError={(e) => {
+          e.target.onerror = null;
+          e.target.src = 'https://via.placeholder.com/800x600?text=No+Image';
+        }}
       />
       <div className="flex justify-between p-3 border-b border-slate-500 mx-auto w-full max-w-2xl text-xs">
         <span>{post && new Date(post.createdAt).toLocaleDateString()}</span>

@@ -1,5 +1,6 @@
 import User from "../models/user.model.js";
 import { errorHandler } from "../utils/error.js";
+import bcryptjs from "bcryptjs";
 
 export const updateUser = async (req, res, next) => {
   if (req.user.id !== req.params.userId) {

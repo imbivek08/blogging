@@ -35,10 +35,9 @@ export default function Header() {
     <div>
       <Navbar className="border-b-2 whitespace-nowrap text-sm sm:text-xl font-semibold dark:text-white ">
         <Link to={"/"} className="self-center">
-          <span className="px-3 py-1 bg-gradient-to-r text-white from-red-500 via-purple-700 to-pink-700 rounded-lg w-[200px]">
-            Bivek
+          <span className="px-3 py-1 bg-gradient-to-r text-white from-indigo-500 via-purple-500 to-pink-500 rounded-lg">
+            PostPluse
           </span>
-          Blog
         </Link>
         {/* this will be hidden after small  size  */}
         <form onSubmit={handleSubmit}>
@@ -68,7 +67,7 @@ export default function Header() {
               arrowIcon={false}
               inline
               label={
-                <Avatar alt="user" img={currentUser.profilePicture} rounded />
+                <Avatar alt="user" img={currentUser.profilePicture || `https://ui-avatars.com/api/?name=${currentUser.username}&background=random`} rounded />
               }
             >
               <Dropdown.Header>
@@ -93,14 +92,14 @@ export default function Header() {
           <Navbar.Toggle />
         </div>
         <Navbar.Collapse>
+          <Navbar.Link active={path === "/"} as={"div"}>
+            <Link to="/">Home</Link>
+          </Navbar.Link>
           <Navbar.Link active={path === "/about"} as={"div"}>
             <Link to="/about">About</Link>
           </Navbar.Link>
-          <Navbar.Link active={path === "/project"} as={"div"}>
-            <Link to="/project">Project</Link>
-          </Navbar.Link>
-          <Navbar.Link active={path === "/contact"} as={"div"}>
-            <Link to="/contact">Contact</Link>
+          <Navbar.Link active={path === "/search"} as={"div"}>
+            <Link to="/search">Articles</Link>
           </Navbar.Link>
         </Navbar.Collapse>
       </Navbar>

@@ -85,9 +85,13 @@ export default function DashUsers() {
                   </Table.Cell>
                   <Table.Cell>
                     <img
-                      src={user.profilePicture}
+                      src={user.profilePicture || `https://ui-avatars.com/api/?name=${user.username}&background=random`}
                       alt={user.username}
                       className="w-10 h-10 object-cover bg-gray-500 rounded-full"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = `https://ui-avatars.com/api/?name=${user.username}&background=random`;
+                      }}
                     />
                   </Table.Cell>
                   <Table.Cell>{user.username}</Table.Cell>
