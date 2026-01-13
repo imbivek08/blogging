@@ -245,17 +245,15 @@ export default function DashProfile() {
           {error}
         </Alert>
       )}
-      {currentUser.isAdmin && (
-        <Link to={"/create-post"}>
-          <Button
-            type="button"
-            gradientDuoTone="purpleToPink"
-            className="w-full mt-4"
-          >
-            Create Post
-          </Button>
-        </Link>
-      )}
+      <Link to="/create-post">
+        <Button
+          type="button"
+          gradientDuoTone="purpleToPink"
+          className="w-full mt-4"
+        >
+          Create Post
+        </Button>
+      </Link>
       <div className="text-red-500 flex justify-between mt-5">
         <span onClick={() => setShowModel(true)} className="cursor-pointer">
           Delete Account
