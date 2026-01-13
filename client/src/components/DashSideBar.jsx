@@ -31,17 +31,15 @@ export default function DashSideBar() {
               </Sidebar.Item>
             </Link>
 
-            {currentUser.isAdmin && (
-              <Link to="/dashboard?tab=posts">
-                <Sidebar.Item
-                  active={tab === "posts"}
-                  icon={HiDocumentText}
-                  as="div"
-                >
-                  Posts
-                </Sidebar.Item>
-              </Link>
-            )}
+            <Link to="/dashboard?tab=posts">
+              <Sidebar.Item
+                active={tab === "posts"}
+                icon={HiDocumentText}
+                as="div"
+              >
+                Posts
+              </Sidebar.Item>
+            </Link>
             {currentUser.isAdmin && (
               <Link to="/dashboard?tab=users">
                 <Sidebar.Item
