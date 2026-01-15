@@ -230,3 +230,43 @@ jobs:
             ${{ env.DOCKERHUB_USERNAME }}/postpluse-client:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+  # ============================================
+  # UPDATE K8S MANIFEST REPO
+  # ============================================
+  update-k8s-manifest:
+    name: Update K8s Manifest
+    runs-on: ubuntu-latest
+    needs: [build-and-push-backend, build-and-push-client]
+    
+    steps:
+      - name: Checkout K8s Manifest Repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ secrets.K8S_MANIFEST_REPO }}  # e.g., "username/k8s-manifest"
+          token: ${{ secrets.GH_PAT }}  # Personal Access Token with repo access
+          path: k8s-manifest
+
+      - name: Setup yq
+        uses: mikefarah/yq@v4
+
+      - name: Update Backend Image Tag
+        run: |
+          cd k8s-manifest
+          # Update backend deployment - adjust the path to your deployment file
+          yq -i '.spec.template.spec.containers[0].image = "${{ env.DOCKERHUB_USERNAME }}/postpluse-backend:v${{ github.run_number }}"' stagging/blog/backend-deployment.yaml
+
+      - name: Update Client Image Tag
+        run: |
+          cd k8s-manifest
+          # Update client deployment - adjust the path to your deployment file
+          yq -i '.spec.template.spec.containers[0].image = "${{ env.DOCKERHUB_USERNAME }}/postpluse-client:v${{ github.run_number }}"' stagging/blog/client-deployment.yaml
+
+      - name: Commit and Push Changes
+        run: |
+          cd k8s-manifest
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add .
+          git diff --staged --quiet || git commit -m "Update images to v${{ github.run_number }} [skip ci]"
+          git push
